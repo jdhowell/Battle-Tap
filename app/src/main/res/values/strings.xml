@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Battle Tap</string>
+    <string name="action_settings">Settings</string>
+    <string name="button_counter">Tap</string>
+
+    <string name="battle_notification">Begin Battle?</string>
+    <string name="battle_notification_yes">Yes</string>
+    <string name="battle_notification_no">No</string>
+</resources>
