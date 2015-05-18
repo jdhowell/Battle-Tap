@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     // Static variables
     private static final int BATTLE_REQUEST = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         fadeOut = new AlphaAnimation(1.0f , 0.0f);
         fadeOut.setDuration(300);
         fadeOut.setFillBefore(true);
-
 
         // Implement try/catch with saving - What does this even mean josh?
         count = 0;
@@ -171,18 +168,18 @@ public class MainActivity extends AppCompatActivity {
         if (count >= 5) {
             String currentKnightAmount = knights.getText().toString();
             int newKnightAmount = Integer.parseInt(currentKnightAmount) + 1;
-            archers.setText(newKnightAmount + "");
-            count -= 10;
+            knights.setText(newKnightAmount + "");
+            count -= 5;
             updateCounter(count);
         }
     }
 
     public void purchaseCavalry(View v) {
         if (count >= 20) {
-            String currentCavalryAmount = knights.getText().toString();
+            String currentCavalryAmount = cavalry.getText().toString();
             int newCavalryAmount = Integer.parseInt(currentCavalryAmount) + 1;
-            archers.setText(newCavalryAmount + "");
-            count -= 10;
+            cavalry.setText(newCavalryAmount + "");
+            count -= 20;
             updateCounter(count);
         }
     }
