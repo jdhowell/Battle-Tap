@@ -21,8 +21,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@null"
-        android:layout_centerHorizontal="true"
-        android:onClick="incrementCounter" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
