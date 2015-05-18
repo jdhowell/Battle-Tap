@@ -1,18 +1,26 @@
 package com.jhowell.battletap;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     // Handles the main game counter
     private TextView textCounter;
     private double count;//a
 
     // Handles requests
     private static final int BATTLE_REQUEST = 1;
+
+    // Handles screen orientation
+    private boolean portraitLock;
 
     // test
     private TextView archers,knights,cavalry;
@@ -26,9 +34,13 @@ public class MainActivity extends Activity {
 
         // Initialize the game counter and set it to 0
         textCounter = (TextView)findViewById(R.id.text_counter);
-        /* Implement try/catch with saving */
+
+        // Implement try/catch with saving //
         count = 0;
         updateCounter(count);
+
+        // Set portrait mode to true
+        portraitLock = true;
 
         // test
         archers = (TextView)findViewById(R.id.archer_counter);
@@ -45,7 +57,41 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // If returning from battle, do the following...
         if (requestCode == BATTLE_REQUEST && resultCode == RESULT_OK) {
-            //do stuff
+            // Set orientation back to portrait
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            portraitLock = true;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // If the phone orients to landscape, notify user if they want to start the battle
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d("here", "ok");
+            AlertDialog.Builder notification = new AlertDialog.Builder(this);
+            notification
+                    .setMessage(R.string.battle_notification)
+                    .setPositiveButton(R.string.battle_notification_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // If yes, start the battle
+                            Intent battleIntent = new Intent(getApplicationContext(), BattleActivity.class);
+                            startActivityForResult(battleIntent, BATTLE_REQUEST);
+                        }
+                    })
+                    .setNegativeButton(R.string.battle_notification_no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // If no, return screen back to portrait
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                            portraitLock = true;
+                        }
+                    })
+                    .create();
+            // Display battle notification
+            notification.show();
         }
     }
 
@@ -54,6 +100,11 @@ public class MainActivity extends Activity {
     /**********  --------------  **********/
 
     public void incrementCounter(View v) {
+        // If there is a lock, release lock on orientation
+        if (portraitLock) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            portraitLock = false;
+        }
         // Add one to the counter
         updateCounter(++count);
     }
@@ -96,24 +147,3 @@ public class MainActivity extends Activity {
     }
     // end
 }
-
-// start battle when button is pressed
-//        AlertDialog.Builder notification = new AlertDialog.Builder(getApplicationContext());
-//        notification
-//                .setMessage(R.string.battle_notification)
-//                .setPositiveButton(R.string.battle_notification_yes, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        Intent battleIntent = new Intent(getApplicationContext(), BattleActivity.class);
-//                        startActivityForResult(battleIntent, BATTLE_REQUEST);
-//                    }
-//                })
-//                .setNegativeButton(R.string.battle_notification_no, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                    }
-//                })
-//                .create();
-//        // Display battle notification
-//        notification.show();
