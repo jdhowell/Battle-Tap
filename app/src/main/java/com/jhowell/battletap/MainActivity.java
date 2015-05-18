@@ -5,43 +5,94 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    // Handles the main game counter
-    private TextView textCounter;
-    private double count;//a
 
-    // Handles requests
+    // Components
+    private TextView textCounter;
+    private TextView firstPlusOneTextView, secondPlusOneTextView, thirdPlusOneTextView;
+    private TextView archers, knights, cavalry;
+
+    // Animations + Threads
+    private Animation fadeOut;
+    private Thread countAnimationThread;
+
+    // Primitives
+    private int count;
+    private int archerCount, knightCount, calvaryCount;
+    private boolean shouldRun = true;
+
+    // Static variables
     private static final int BATTLE_REQUEST = 1;
 
-    // test
-    private TextView archers,knights,cavalry;
-    private int a,k,c;
-    // end
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize the game counter and set it to 0
-        textCounter = (TextView)findViewById(R.id.text_counter);
+        // Initialization of components
+        archers = (TextView) findViewById(R.id.archer_counter);
+        knights = (TextView) findViewById(R.id.knight_counter);
+        cavalry = (TextView) findViewById(R.id.cavalry_counter);
 
-        // Implement try/catch with saving //
+        textCounter = (TextView) findViewById(R.id.text_counter);
+        firstPlusOneTextView = (TextView) findViewById(R.id.firstPlusOneText);
+        secondPlusOneTextView = (TextView) findViewById(R.id.secondPlusOneText);
+        thirdPlusOneTextView = (TextView) findViewById(R.id.thirdPlusOneText);
+
+        //Initialization of animations
+        fadeOut = new AlphaAnimation(1.0f , 0.0f);
+        fadeOut.setDuration(300);
+        fadeOut.setFillBefore(true);
+
+
+        // Implement try/catch with saving - What does this even mean josh?
         count = 0;
+        archerCount = knightCount = calvaryCount = 0;
         updateCounter(count);
 
-        // test
-        archers = (TextView)findViewById(R.id.archer_counter);
-        archers.setText("Archers: 0");
-        knights = (TextView)findViewById(R.id.knight_counter);
-        knights.setText("Knights: 0");
-        cavalry = (TextView)findViewById(R.id.cavalry_counter);
-        cavalry.setText("Cavalry: 0");
-        a=k=c=0;
-        // end
+
+        countAnimationThread = new Thread() {
+            public void run() {
+                while (shouldRun) {
+                    try {
+                        Thread.sleep(2);
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                if (firstPlusOneTextView.getY() > 50) {
+                                    firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 1);
+                                    if (firstPlusOneTextView.getY() < 200) {
+                                        firstPlusOneTextView.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                                if (secondPlusOneTextView.getY() > 50) {
+                                    secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 1);
+                                    if (secondPlusOneTextView.getY() < 200) {
+                                        secondPlusOneTextView.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                                if (thirdPlusOneTextView.getY() > 50) {
+                                    thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 1);
+                                    if (thirdPlusOneTextView.getY() < 200) {
+                                        thirdPlusOneTextView.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        countAnimationThread.start();
     }
 
     @Override
@@ -57,14 +108,30 @@ public class MainActivity extends AppCompatActivity {
     /**********  --------------  **********/
 
     public void incrementCounter(View v) {
-        // Add one to the counter
         updateCounter(++count);
+        switch(count%3) {
+            case 0:
+                firstPlusOneTextView.setY(500);
+                firstPlusOneTextView.startAnimation(fadeOut);
+
+                break;
+            case 1:
+                secondPlusOneTextView.setY(500);
+                secondPlusOneTextView.startAnimation(fadeOut);
+                break;
+            case 2:
+                thirdPlusOneTextView.setY(500);
+                thirdPlusOneTextView.startAnimation(fadeOut);
+                break;
+        }
     }
 
     public void updateCounter(double count) {
-        // If counter is too large, use E notation, else display counter
-        if (count > 1E15) textCounter.setText(String.format("%.0e", count));
-        else textCounter.setText(String.format("%,d", (long)count));
+        // If counter is too large, use E notation, else display counter. -Seems completely unnecessary..I doubt theyll click over 2billion
+        if (count > 1E15)
+            textCounter.setText(String.format("%.0e", count));
+        else
+            textCounter.setText(String.format("%,d", (long) count));
     }
 
     public void startBattle(View v) {
@@ -90,12 +157,11 @@ public class MainActivity extends AppCompatActivity {
         notification.show();
     }
 
-    // test
     public void purchaseArcher(View v) {
         if (count >= 10) {
-            String str = archers.getText().toString();
-            String newstr = str.substring(0, str.length() - String.valueOf(a++).length()) + String.valueOf(a);
-            archers.setText(newstr);
+            String currentArcherAmount = archers.getText().toString();
+            int newArcherAmount = Integer.parseInt(currentArcherAmount) + 1;
+            archers.setText(newArcherAmount + "");
             count -= 10;
             updateCounter(count);
         }
@@ -103,22 +169,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void purchaseKnight(View v) {
         if (count >= 5) {
-            String str = knights.getText().toString();
-            String newstr = str.substring(0, str.length() - String.valueOf(k++).length()) + String.valueOf(k);
-            knights.setText(newstr);
-            count -= 5;
+            String currentKnightAmount = knights.getText().toString();
+            int newKnightAmount = Integer.parseInt(currentKnightAmount) + 1;
+            archers.setText(newKnightAmount + "");
+            count -= 10;
             updateCounter(count);
         }
     }
 
     public void purchaseCavalry(View v) {
         if (count >= 20) {
-            String str = cavalry.getText().toString();
-            String newstr = str.substring(0, str.length() - String.valueOf(c++).length()) + String.valueOf(c);
-            cavalry.setText(newstr);
-            count -= 20;
+            String currentCavalryAmount = knights.getText().toString();
+            int newCavalryAmount = Integer.parseInt(currentCavalryAmount) + 1;
+            archers.setText(newCavalryAmount + "");
+            count -= 10;
             updateCounter(count);
         }
     }
-    // end
 }
+
