@@ -23,6 +23,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="incrementCounter" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/scrollview"
+        android:text="Battle"
+        android:onClick="startBattle" />
+
     <!-- test -->
 
     <LinearLayout
