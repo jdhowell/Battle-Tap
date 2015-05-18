@@ -76,24 +76,24 @@ public class MainActivity extends AppCompatActivity {
                         Thread.sleep(2);
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                if (firstPlusOneTextView.getY() > 50) {
-                                    firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 1);
-                                    if (firstPlusOneTextView.getY() < 200) {
-                                        firstPlusOneTextView.setVisibility(View.INVISIBLE);
-                                    }
-                                }
-                                if (secondPlusOneTextView.getY() > 50) {
-                                    secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 1);
-                                    if (secondPlusOneTextView.getY() < 200) {
-                                        secondPlusOneTextView.setVisibility(View.INVISIBLE);
-                                    }
-                                }
-                                if (thirdPlusOneTextView.getY() > 50) {
-                                    thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 1);
-                                    if (thirdPlusOneTextView.getY() < 200) {
-                                        thirdPlusOneTextView.setVisibility(View.INVISIBLE);
-                                    }
-                                }
+//                                if (firstPlusOneTextView.getY() > 50) {
+                                    firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 2);
+//                                    if (firstPlusOneTextView.getY() < 200) {
+//                                        firstPlusOneTextView.setVisibility(View.INVISIBLE);
+//                                    }
+//                                }
+//                                if (secondPlusOneTextView.getY() > 50) {
+                                    secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 2);
+//                                    if (secondPlusOneTextView.getY() < 200) {
+//                                        secondPlusOneTextView.setVisibility(View.INVISIBLE);
+//                                    }
+//                                }
+//                                if (thirdPlusOneTextView.getY() > 50) {
+                                    thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 2);
+//                                    if (thirdPlusOneTextView.getY() < 200) {
+//                                        thirdPlusOneTextView.setVisibility(View.INVISIBLE);
+//                                    }
+//                                }
                             }
                         });
 
@@ -200,4 +200,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
