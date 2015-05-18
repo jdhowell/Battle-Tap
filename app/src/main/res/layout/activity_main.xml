@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="Archers:10"
+                android:text="Archer:10"
                 android:onClick="purchaseArcher" />
 
             <Button
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="Knights:5"
+                android:text="Knight:5"
                 android:onClick="purchaseKnight" />
 
             <Button
