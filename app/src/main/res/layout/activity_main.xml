@@ -4,30 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <!--Counter, button that allows counting, button for start battle-->
     <TextView
         android:id="@+id/text_counter"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp" />
+        android:layout_toStartOf="@+id/vertical_scrollview"
+        android:textSize="30sp"/>
 
     <Button
         android:id="@+id/button_counter"
-        android:layout_above="@+id/scrollview"
+        android:background="@null"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@null"
-        android:layout_centerHorizontal="true" />
+        android:layout_toStartOf="@+id/vertical_scrollview"/>
 
     <Button
+        android:id="@+id/start_battle_button"
+        android:text="Battle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/scrollview"
-        android:text="Battle"
-        android:onClick="startBattle"
-        android:id="@+id/button"/>
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/vertical_scrollview"
+        android:onClick="startBattle"/>
 
 
     <!--TextViews with unit names-->
@@ -36,24 +35,24 @@
         android:text="Archers: "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button"
-        android:layout_alignEnd="@+id/cavalry_text"/>
+        android:layout_margin="5dp"
+        android:layout_above="@+id/knight_text"/>
 
     <TextView
         android:id="@+id/knight_text"
         android:text="Knights: "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/archer_text"
-        android:layout_alignStart="@+id/archer_text"/>
+        android:layout_margin="5dp"
+        android:layout_above="@+id/cavalry_text"/>
 
     <TextView
         android:id="@+id/cavalry_text"
         android:text="Cavalry: "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/knight_text"
-        android:layout_alignParentStart="true"/>
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"/>
 
 
     <!--Counters that hold the amount of each unit-->
@@ -80,80 +79,247 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/cavalry_text"
         android:layout_toEndOf="@+id/cavalry_text"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginStart="10dp"/>
     <!--Just have the left margin 10dp from the longest unit name. Rest alignStart -->
 
 
     <!--Buttons that allow for purchasing of units-->
-    <HorizontalScrollView
-        android:id="@+id/scrollview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <ScrollView
+        android:id="@+id/vertical_scrollview"
         android:background="#aaa"
-        android:layout_alignParentBottom="true">
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentEnd="true">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/purchase_archer_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/archers"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:text="Archer:10"
-                android:onClick="purchaseArcher" />
+                android:onClick="purchaseArcher"/>
 
             <Button
                 android:id="@+id/purchase_knight_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/knights"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:text="Knight:5"
-                android:onClick="purchaseKnight" />
+                android:onClick="purchaseKnight"/>
 
             <Button
                 android:id="@+id/purchase_cavalry_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:text="C"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:text="Cavalry:20"
-                android:onClick="purchaseCavalry" />
-        </LinearLayout>
-    </HorizontalScrollView>
+                android:onClick="purchaseCavalry"/>
 
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:text="\?"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:text="\?"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:text="\?"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:text="\?"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:text="\?"/>
+        </LinearLayout>
+    </ScrollView>
 
     <!--TextViews that allow for the +1 text to show up-->
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="+1"
         android:id="@+id/firstPlusOneText"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/text_counter"
-        android:layout_marginStart="82dp"
-        android:visibility="invisible"/>
-
-    <TextView
+        android:text="+1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="+1"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <TextView
         android:id="@+id/secondPlusOneText"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/firstPlusOneText"
-        android:visibility="invisible"/>
-
-    <TextView
+        android:text="+1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="+1"
-        android:id="@+id/thirdPlusOneText"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/secondPlusOneText"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
+    <TextView
+        android:id="@+id/thirdPlusOneText"
+        android:text="+1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 </RelativeLayout>
+
+    <!--&lt;!&ndash;Counter, button that allows counting, button for start battle&ndash;&gt;-->
+    <!--<TextView-->
+    <!--android:id="@+id/text_counter"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textSize="30sp"/>-->
+
+    <!--<Button-->
+    <!--android:id="@+id/button_counter"-->
+    <!--android:background="@null"-->
+    <!--android:layout_above="@+id/scrollview"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:layout_centerHorizontal="true"/>-->
+
+    <!--<Button-->
+    <!--android:id="@+id/start_battle_button"-->
+    <!--android:text="Battle"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_above="@+id/scrollview"-->
+    <!--android:onClick="startBattle"/>-->
+
+
+    <!--&lt;!&ndash;TextViews with unit names&ndash;&gt;-->
+    <!--<TextView-->
+    <!--android:id="@+id/archer_text"-->
+    <!--android:text="Archers: "-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_above="@+id/start_battle_button"-->
+    <!--android:layout_alignEnd="@+id/cavalry_text"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/knight_text"-->
+    <!--android:text="Knights: "-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/archer_text"-->
+    <!--android:layout_alignStart="@+id/archer_text"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cavalry_text"-->
+    <!--android:text="Cavalry: "-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/knight_text"-->
+    <!--android:layout_alignParentStart="true"/>-->
+
+
+    <!--&lt;!&ndash;Counters that hold the amount of each unit&ndash;&gt;-->
+    <!--<TextView-->
+    <!--android:id="@+id/archer_counter"-->
+    <!--android:text="0"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignTop="@+id/archer_text"-->
+    <!--android:layout_alignStart="@+id/cavalry_counter"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/knight_counter"-->
+    <!--android:text="0"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignTop="@+id/knight_text"-->
+    <!--android:layout_alignStart="@+id/cavalry_counter"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cavalry_counter"-->
+    <!--android:text="0"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignTop="@+id/cavalry_text"-->
+    <!--android:layout_toEndOf="@+id/cavalry_text"-->
+    <!--android:layout_marginStart="10dp"/>-->
+    <!--&lt;!&ndash;Just have the left margin 10dp from the longest unit name. Rest alignStart &ndash;&gt;-->
+
+
+    <!--&lt;!&ndash;Buttons that allow for purchasing of units&ndash;&gt;-->
+    <!--<HorizontalScrollView-->
+    <!--android:id="@+id/scrollview"-->
+    <!--android:background="#aaa"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true">-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<Button-->
+    <!--android:id="@+id/purchase_archer_button"-->
+    <!--android:text="Archer:10"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:onClick="purchaseArcher"/>-->
+
+    <!--<Button-->
+    <!--android:id="@+id/purchase_knight_button"-->
+    <!--android:text="Knight:5"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:onClick="purchaseKnight"/>-->
+
+    <!--<Button-->
+    <!--android:id="@+id/purchase_cavalry_button"-->
+    <!--android:text="Cavalry:20"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:onClick="purchaseCavalry"/>-->
+    <!--</LinearLayout>-->
+    <!--</HorizontalScrollView>-->
+
+
+    <!--&lt;!&ndash;TextViews that allow for the +1 text to show up&ndash;&gt;-->
+    <!--<TextView-->
+    <!--android:id="@+id/firstPlusOneText"-->
+    <!--android:text="+1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:visibility="invisible"-->
+    <!--android:textAppearance="?android:attr/textAppearanceSmall"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/secondPlusOneText"-->
+    <!--android:text="+1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:visibility="invisible"-->
+    <!--android:textAppearance="?android:attr/textAppearanceSmall"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/thirdPlusOneText"-->
+    <!--android:text="+1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:visibility="invisible"-->
+    <!--android:textAppearance="?android:attr/textAppearanceSmall"/>-->

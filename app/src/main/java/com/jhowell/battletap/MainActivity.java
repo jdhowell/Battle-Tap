@@ -29,11 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Static variables
     private static final int BATTLE_REQUEST = 1;
-    
 
-    /*
-     * Initializes components, threads, and other variables
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         count = 0;
         updateCounter(count);
 
+        // Display "+1" wherever the user touches the screen
         Button buttonCounter = (Button) findViewById(R.id.button_counter);
         buttonCounter.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -70,49 +67,32 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        // Initialization of animation thread
-        countAnimationThread = new Thread() {
-            public void run() {
-                while (shouldRun) {
-                    try {
-                        Thread.sleep(2);
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 2);
-                                secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 2);
-                                thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 2);
-                            }
-                        });
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        countAnimationThread.start();
+        startAnimationThread();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        shouldRun = true;
+    }
 
-    /*
-     * Handles the results from each battle
-     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        shouldRun = false;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // If returning from battle, do the following...
         if (requestCode == BATTLE_REQUEST && resultCode == RESULT_OK) {
-            // Do something
+            startAnimationThread();
         }
     }
 
-
-    /*
-     * Increments the main counter and decides which "+1 textview" to use
-     */
     public void incrementCounter(int x, int y) {
         updateCounter(++count);
-        switch(count%3) {
+        switch(count % 3) {
             case 0:
                 firstPlusOneTextView.setX(x);
                 firstPlusOneTextView.setY(y);
@@ -131,10 +111,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    /*
-     * Displays the counter accordingly
-     */
     public void updateCounter(double count) {
         // If counter is too large, use E notation, else display counter. -Seems completely unnecessary..I doubt theyll click over 2billion
         if (count > 1E15)
@@ -143,10 +119,6 @@ public class MainActivity extends AppCompatActivity {
             textCounter.setText(String.format("%,d", (long) count));
     }
 
-
-    /*
-     * Alerts the user if he/she wants to begin battling
-     */
     public void startBattle(View v) {
         // Initialization of the notification
         AlertDialog.Builder notification = new AlertDialog.Builder(this);
@@ -172,10 +144,29 @@ public class MainActivity extends AppCompatActivity {
         notification.show();
     }
 
+    public void startAnimationThread() {
+        countAnimationThread = new Thread() {
+            public void run() {
+                while (shouldRun) {
+                    try {
+                        Thread.sleep(2);
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 2);
+                                secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 2);
+                                thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 2);
+                            }
+                        });
 
-    /*
-     * Displays the amount of units for archers
-     */
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        countAnimationThread.start();
+    }
+
     public void purchaseArcher(View v) {
         if (count >= 10) {
             String currentArcherAmount = archers.getText().toString();
@@ -186,10 +177,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    /*
-     * Displays the amount of units for knights
-     */
     public void purchaseKnight(View v) {
         if (count >= 5) {
             String currentKnightAmount = knights.getText().toString();
@@ -200,10 +187,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    /*
-     * Displays the amount of units for cavalry
-     */
     public void purchaseCavalry(View v) {
         if (count >= 20) {
             String currentCavalryAmount = cavalry.getText().toString();
