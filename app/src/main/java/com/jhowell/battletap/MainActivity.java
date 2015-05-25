@@ -1,199 +1,90 @@
 package com.jhowell.battletap;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // Components
-    private TextView textCounter;
-    private TextView firstPlusOneTextView, secondPlusOneTextView, thirdPlusOneTextView;
-    private TextView archers, knights, cavalry;
-
-    // Animations + Threads
-    private Animation fadeOut;
-    private Thread countAnimationThread;
-
-    // Primitives
-    private int count;
-    private boolean shouldRun = true;
-
-    // Static variables
-    private static final int BATTLE_REQUEST = 1;
+    private DatabaseHandler db;
+    private Button login, register;
+    private String username, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialization of components
-        archers = (TextView) findViewById(R.id.archer_counter);
-        knights = (TextView) findViewById(R.id.knight_counter);
-        cavalry = (TextView) findViewById(R.id.cavalry_counter);
+        // Initialization of the database
+        db = new DatabaseHandler(this);
 
-        textCounter = (TextView) findViewById(R.id.text_counter);
-        firstPlusOneTextView = (TextView) findViewById(R.id.firstPlusOneText);
-        secondPlusOneTextView = (TextView) findViewById(R.id.secondPlusOneText);
-        thirdPlusOneTextView = (TextView) findViewById(R.id.thirdPlusOneText);
+        // Initialization of buttons
+        login = (Button) findViewById(R.id.login_button);
+        login.setOnClickListener(this);
+        register = (Button) findViewById(R.id.register_button);
+        register.setOnClickListener(this);
+    }
 
-        // Initialization of animations
-        fadeOut = new AlphaAnimation(1.0f , 0.0f);
-        fadeOut.setDuration(300);
-        fadeOut.setFillBefore(true);
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.login_button:
+                // Check database to see if username and password are correct
+                EditText loginName = (EditText) findViewById(R.id.login_username);
+                username = loginName.getText().toString();
 
-        // Implement try/catch with saving - What does this even mean josh?
-        count = 0;
-        updateCounter(count);
+                // If username exists, check password
+                if (db.contains(username)) {
+                    EditText loginPass = (EditText) findViewById(R.id.login_password);
+                    password = loginPass.getText().toString();
 
-        // Display "+1" wherever the user touches the screen
-        Button buttonCounter = (Button) findViewById(R.id.button_counter);
-        buttonCounter.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    int x = (int) motionEvent.getX();
-                    int y = (int) motionEvent.getY();
-                    incrementCounter(x, y);
+                    // If password is correct, login and start game
+                    if (password.equals(db.getPlayer(username).getPassword())) {
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("player", db.getPlayer(username));
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+
+                    } else {
+                        Toast.makeText(this, "Password is incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this,"Username does not exist", Toast.LENGTH_SHORT).show();
                 }
-                return true;
-            }
-        });
-        startAnimationThread();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        shouldRun = true;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        shouldRun = false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // If returning from battle, do the following...
-        if (requestCode == BATTLE_REQUEST && resultCode == RESULT_OK) {
-            startAnimationThread();
-        }
-    }
-
-    public void incrementCounter(int x, int y) {
-        updateCounter(++count);
-        switch(count % 3) {
-            case 0:
-                firstPlusOneTextView.setX(x);
-                firstPlusOneTextView.setY(y);
-                firstPlusOneTextView.startAnimation(fadeOut);
                 break;
-            case 1:
-                secondPlusOneTextView.setX(x);
-                secondPlusOneTextView.setY(y);
-                secondPlusOneTextView.startAnimation(fadeOut);
-                break;
-            case 2:
-                thirdPlusOneTextView.setX(x);
-                thirdPlusOneTextView.setY(y);
-                thirdPlusOneTextView.startAnimation(fadeOut);
-                break;
-        }
-    }
+            case R.id.register_button:
+                EditText registerName = (EditText) findViewById(R.id.register_username);
+                username = registerName.getText().toString();
 
-    public void updateCounter(double count) {
-        // If counter is too large, use E notation, else display counter. -Seems completely unnecessary..I doubt theyll click over 2billion
-        if (count > 1E15)
-            textCounter.setText(String.format("%.0e", count));
-        else
-            textCounter.setText(String.format("%,d", (long) count));
-    }
+                // Check if username is available
+                if (db.isAvailable(username)) {
+                    EditText registerPass = (EditText) findViewById(R.id.register_password);
+                    password = registerPass.getText().toString();
+                    EditText confirmPass = (EditText) findViewById(R.id.register_confirm_password);
+                    String confirmPassword = confirmPass.getText().toString();
 
-    public void startBattle(View v) {
-        // Initialization of the notification
-        AlertDialog.Builder notification = new AlertDialog.Builder(this);
-        notification
-                .setMessage(R.string.battle_notification)
-                .setPositiveButton(R.string.battle_notification_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // If yes, start the battle
-                        Intent battleIntent = new Intent(getApplicationContext(), BattleActivity.class);
-                        startActivityForResult(battleIntent, BATTLE_REQUEST);
+                    // Check if passwords match
+                    if (password.equals(confirmPassword)) {
+                        Player player = new Player(username, password);
+                        db.addPlayer(player);
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("player", player);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+
+                    } else {
+                        Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .setNegativeButton(R.string.battle_notification_no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Do nothing and return to screen
-                    }
-                })
-                .create();
-
-        // Display battle notification
-        notification.show();
-    }
-
-    public void startAnimationThread() {
-        countAnimationThread = new Thread() {
-            public void run() {
-                while (shouldRun) {
-                    try {
-                        Thread.sleep(2);
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                firstPlusOneTextView.setY(firstPlusOneTextView.getY() - 2);
-                                secondPlusOneTextView.setY(secondPlusOneTextView.getY() - 2);
-                                thirdPlusOneTextView.setY(thirdPlusOneTextView.getY() - 2);
-                            }
-                        });
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                } else {
+                    Toast.makeText(this, "Username is taken", Toast.LENGTH_SHORT).show();
                 }
-            }
-        };
-        countAnimationThread.start();
-    }
-
-    public void purchaseArcher(View v) {
-        if (count >= 10) {
-            String currentArcherAmount = archers.getText().toString();
-            int newArcherAmount = Integer.parseInt(currentArcherAmount) + 1;
-            archers.setText(String.valueOf(newArcherAmount));
-            count -= 10;
-            updateCounter(count);
-        }
-    }
-
-    public void purchaseKnight(View v) {
-        if (count >= 5) {
-            String currentKnightAmount = knights.getText().toString();
-            int newKnightAmount = Integer.parseInt(currentKnightAmount) + 1;
-            knights.setText(String.valueOf(newKnightAmount));
-            count -= 5;
-            updateCounter(count);
-        }
-    }
-
-    public void purchaseCavalry(View v) {
-        if (count >= 20) {
-            String currentCavalryAmount = cavalry.getText().toString();
-            int newCavalryAmount = Integer.parseInt(currentCavalryAmount) + 1;
-            cavalry.setText(String.valueOf(newCavalryAmount));
-            count -= 20;
-            updateCounter(count);
+                break;
         }
     }
 }
